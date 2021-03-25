@@ -8,3 +8,4 @@ __pycache__/
 ### Local ###
 # local (project) python interpreter
 venv/
+ratings/migrations/[0-9]*
