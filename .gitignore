@@ -1,0 +1,10 @@
+### Common ###
+# Byte-compiled / optimized / DLL files
+*.py[cod]
+*.log
+logs/
+__pycache__/
+
+### Local ###
+# local (project) python interpreter
+venv/
