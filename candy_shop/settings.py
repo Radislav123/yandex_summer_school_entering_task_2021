@@ -32,7 +32,7 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     # project apps
-    'candy_shop',
+    'candy_shop.shop_api.apps.ShopApiConfig',
 
     # default django apps
     'django.contrib.admin',
@@ -43,16 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     # third-party apps
-    'rest_framework',
 ]
-
-REST_FRAMEWORK = {
-    # Use Django's standard `django.contrib.auth` permissions,
-    # or allow read-only access for unauthenticated users.
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
-    ]
-}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

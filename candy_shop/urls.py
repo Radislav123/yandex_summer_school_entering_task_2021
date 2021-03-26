@@ -15,10 +15,8 @@ Including another URLconf
 """
 from django.urls import path, include
 from django.contrib import admin
-from candy_shop import views
 
 urlpatterns = [
-    path("", views.Index.as_view()),
     path("admin/", admin.site.urls),
-    path("shop_api/", include("candy_shop.shop_api.urls")),
+    path("", include("candy_shop.shop_api.urls")),
 ]

@@ -4,4 +4,5 @@ from django.urls import path
 
 urlpatterns = [
     path("", views.Index.as_view()),
+    path("couriers/", views.Courier.as_view())
 ]

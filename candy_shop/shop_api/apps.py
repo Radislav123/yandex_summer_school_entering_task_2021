@@ -2,4 +2,4 @@ from django.apps import AppConfig
 
 
 class ShopApiConfig(AppConfig):
-    name = 'shop_api'
+    name = 'candy_shop.shop_api'
