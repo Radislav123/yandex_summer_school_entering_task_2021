@@ -1,65 +1,100 @@
-from django.test import TestCase, Client
+from candy_shop.shop_api.scripts import database_for_test
+from django.core.exceptions import ValidationError
+from django.test.testcases import SerializeMixin
+from django.test import TestCase
+from pathlib import Path
 import unittest
+import requests
+import json
+import os
 
 
 GET = "get"
 POST = "post"
 PATCH = "patch"
 
-COURIERS = "couriers"
+TEST_FOLDER = os.path.dirname(os.path.abspath(__file__))
+JSON_REQUESTS_FOLDER = f"{TEST_FOLDER}/jsons/requests/"
+JSON_RESPONSES_FOLDER = f"{TEST_FOLDER}/jsons/responses/"
+SCHEME = "http"
+HOST = "127.0.0.1"
+PORT = 8000
+URL_BASE = f"{SCHEME}://{HOST}:{PORT}/"
 
 
-class ProjectBaseTestCase(TestCase):
+def before_and_after_test(function):
+    def wrapper(*args, **kwargs):
+        try:
+            database_for_test.before_test()
+            function(*args, **kwargs)
+        except ValidationError as error:
+            raise error
+        finally:
+            database_for_test.after_test()
+    return wrapper
+
+
+class ProjectBaseTestCase(SerializeMixin, TestCase):
     """Project parent test class."""
 
-    # dicts like : {
-    #    <http_method_1>: [<path_1>, <path_2>, <path_3>],
-    #    <http_method_2>: [<path_1>, <path_2>, <path_3>]
-    #    }
-    redirect_without_slash_paths = {}
-    redirect_paths = {}
-    available_paths = {}
+    lockfile = __file__
 
     @classmethod
     def skip_if_base_class(cls):
         if cls == ProjectBaseTestCase:
             raise unittest.SkipTest(f"it is ProjectBaseTestCase")
 
-    def test_redirect(self):
+    # method_name is name of method which calls self.write_response()
+    def write_response(self, response, method_name):
+        folder_to_save = f"{TEST_FOLDER}/responses/{type(self).__name__}/"
+        Path(folder_to_save).mkdir(parents = True, exist_ok = True)
+
+        with open(f"{folder_to_save}/{method_name}.json", 'w') as file:
+            response_json = response.json()
+            response_json.update({"status_code": response.status_code})
+            file.write(json.dumps(response_json, indent = 2))
+
+    @before_and_after_test
+    def test_with_jsons(self, json_name = None, expected_status_code = None, method_name = "None"):
         self.skip_if_base_class()
 
-        client = Client()
-        for http_method in self.redirect_paths:
-            method_to_call = getattr(client, http_method)
-            for path in self.redirect_paths[http_method]:
-                self.assertEqual(method_to_call(path).status_code, 301)
+        if json_name is None:
+            raise unittest.SkipTest(f"json_name == None")
+        if expected_status_code is None:
+            raise unittest.SkipTest(f"expected_status_code == None")
 
-    def test_redirect_without_slash(self):
-        self.skip_if_base_class()
+        with open(JSON_REQUESTS_FOLDER + json_name, 'r') as request_file:
+            url = URL_BASE + "couriers"
+            request_data = json.load(request_file)
+            response = requests.post(url, json = request_data)
 
-        client = Client()
-        for http_method in self.redirect_without_slash_paths:
-            method_to_call = getattr(client, http_method)
-            for path in self.redirect_without_slash_paths[http_method]:
-                response = method_to_call(path)
-                self.assertEqual(path + '/', response["Location"])
+            self.write_response(response, method_name)
 
-    def test_path_is_available(self):
-        self.skip_if_base_class()
+            self.assertEqual(response.status_code, expected_status_code)
 
-        client = Client()
-        for http_method in self.available_paths:
-            method_to_call = getattr(client, http_method)
-            for path in self.available_paths[http_method]:
-                self.assertEqual(method_to_call(path).status_code, 200)
+            with open(JSON_RESPONSES_FOLDER + json_name, 'r') as response_file:
+                self.assertEqual(response.json(), json.load(response_file))
 
 
-class IndexTestCase(ProjectBaseTestCase):
-    available_paths = {GET: [""]}
-
-
-class CourierTestCase(ProjectBaseTestCase):
-    redirect_without_slash_paths = {POST: [f"/{COURIERS}"]}
-    available_paths = {POST: [f"/{COURIERS}/"]}
+class CourierValidTestCase(ProjectBaseTestCase):
+    """Проверяет POST /couriers на валидных данных"""
     # test POST method
     # https://docs.djangoproject.com/en/3.1/ref/csrf/#testing
+
+    def test_couriers_valid(self):
+        self.test_with_jsons(
+            json_name = "couriers_valid.json",
+            expected_status_code = 201,
+            method_name = "test_couriers_valid"
+        )
+
+
+class CourierNotValidTestCase(ProjectBaseTestCase):
+    """Проверяет POST /couriers на невалидных данных"""
+
+    def test_couriers_not_valid(self):
+        self.test_with_jsons(
+            json_name = "couriers_not_valid.json",
+            expected_status_code = 400,
+            method_name = "test_couriers_not_valid"
+        )

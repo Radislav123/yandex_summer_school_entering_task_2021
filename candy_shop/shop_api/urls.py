@@ -1,8 +1,8 @@
 from candy_shop.shop_api import views
-from django.urls import path
+from django.urls import re_path, path
 
 
 urlpatterns = [
-    path("", views.Index.as_view()),
-    path("couriers/", views.Courier.as_view())
+    path("", views.IndexView.as_view()),
+    re_path(r"couriers/?$", views.CourierView.as_view())
 ]
