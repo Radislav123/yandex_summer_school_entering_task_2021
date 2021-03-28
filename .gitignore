@@ -10,5 +10,4 @@ __pycache__/
 venv/
 candy_shop/shop_api/migrations/[0-9]*
 *.sqlite3
-db_dump.json
 candy_shop/shop_api/tests/responses/

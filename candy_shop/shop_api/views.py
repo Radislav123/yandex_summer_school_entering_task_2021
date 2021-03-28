@@ -1,8 +1,8 @@
-from candy_shop.shop_api.models import Courier, CourierType, validate_courier_type
 from django.http import HttpResponse, HttpRequest, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 from django.core.exceptions import ValidationError
+from candy_shop.shop_api.models import Courier
 from django.views import View
 import json
 
@@ -31,14 +31,12 @@ class CourierView(View):
 
         for courier_item in data:
             try:
-                courier = Courier(
-                    courier_type = CourierType.objects.get(name = validate_courier_type(courier_item["courier_type"])),
-                    regions = courier_item["regions"],
-                    working_hours = courier_item["working_hours"]
-                ).set_id(courier_item["courier_id"])
-                courier.full_clean()
+                courier = Courier.validate_and_create_from_courier_item(courier_item = courier_item)
             except ValidationError:
-                not_valid_courier_ids.append({"id": courier_item["courier_id"]})
+                try:
+                    not_valid_courier_ids.append({"id": courier_item["courier_id"]})
+                except KeyError:
+                    not_valid_courier_ids.append({"id": None})
             else:
                 courier.save()
                 created_courier_ids.append({"id": courier_item["courier_id"]})

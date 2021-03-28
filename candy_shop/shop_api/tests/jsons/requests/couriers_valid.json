@@ -32,7 +32,9 @@
         23,
         33
       ],
-      "working_hours": []
+      "working_hours": [
+        "09:00-18:00"
+      ]
     }
   ]
 }
