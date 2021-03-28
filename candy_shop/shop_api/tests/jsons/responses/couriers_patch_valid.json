@@ -1,0 +1,12 @@
+{
+  "courier_id": 2,
+  "courier_type": "foot",
+  "regions": [
+    11,
+    33,
+    2
+  ],
+  "working_hours": [
+    "09:00-18:00"
+  ]
+}

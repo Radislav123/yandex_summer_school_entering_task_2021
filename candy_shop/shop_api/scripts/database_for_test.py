@@ -16,6 +16,3 @@ def after_test():
 
 def run():
     pass
-
-
-run()

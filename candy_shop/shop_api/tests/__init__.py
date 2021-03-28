@@ -26,8 +26,9 @@ def before_and_after_test(function):
 
 
 class ViewBaseTestCase(TestCase):
-    testing_view = None
+    http_method = None
     url_path = None
+    view = None
 
     def setUp(self) -> None:
         self.factory = RequestFactory()
@@ -58,11 +59,12 @@ class ViewBaseTestCase(TestCase):
         self.skip_if_base_class()
 
         arguments = {
-            "testing_view": self.testing_view,
+            "view": self.view,
             "url_path": self.url_path,
             "json_name": json_name,
             "expected_status_code": expected_status_code,
-            "method_name": method_name
+            "method_name": method_name,
+            "http_method": self.http_method
         }
 
         for argument_name in arguments:
@@ -72,13 +74,13 @@ class ViewBaseTestCase(TestCase):
         request_content_type = "application/json"
 
         with open(JSON_REQUESTS_FOLDER + json_name, 'r') as request_file:
-            request = self.factory.post(
+            request = getattr(self.factory, self.http_method)(
                 path = self.url_path,
                 data = json.load(request_file),
                 content_type = request_content_type
             )
 
-            response = self.testing_view.as_view()(request)
+            response = self.view.as_view()(request)
             self.write_response(response, method_name)
             self.assertEqual(int(response.status_code), int(expected_status_code))
 

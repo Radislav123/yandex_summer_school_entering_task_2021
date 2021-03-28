@@ -16,6 +16,3 @@ def run():
             del update_data["_state"]
             del update_data["id"]
             CourierType.objects.filter(name = key).update(**update_data)
-
-
-run()

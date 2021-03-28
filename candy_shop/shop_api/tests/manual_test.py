@@ -12,7 +12,7 @@ URL_BASE = f"{SCHEME}://{HOST}:{PORT}/"
 
 
 def couriers_valid():
-    with open(JSONS_FOLDER + "couriers_valid.json", 'r') as file:
+    with open(JSONS_FOLDER + "couriers_post_valid.json", 'r') as file:
         url = URL_BASE + "couriers"
         data = json.load(file)
         response = requests.post(url, json = data)
@@ -22,7 +22,7 @@ def couriers_valid():
 
 
 def couriers_not_valid():
-    with open(JSONS_FOLDER + "couriers_not_valid.json", 'r') as file:
+    with open(JSONS_FOLDER + "couriers_post_not_valid.json", 'r') as file:
         url = URL_BASE + "couriers"
         data = json.load(file)
         response = requests.post(url, json = data)

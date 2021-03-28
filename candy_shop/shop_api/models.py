@@ -30,6 +30,14 @@ def validate_courier_id(value):
 
 
 @check_value_is_not_null
+def validate_courier_id_for_patch(value):
+    validate_courier_id(value)
+    if not Courier.objects.filter(id = int(value)).exists():
+        raise ValidationError(f"can not perform patch because Courier with such ({value}) id does not exist")
+    return value
+
+
+@check_value_is_not_null
 def validate_courier_type(value):
     try:
         CourierType.objects.get(name = value)
@@ -84,7 +92,7 @@ class Courier(models.Model):
     working_hours = jsonfield.JSONField()
 
     @staticmethod
-    def validate_and_create_from_courier_item(courier_item):
+    def validate_create_and_save_from_courier_item(courier_item):
         try:
             courier_id = courier_item["courier_id"]
             courier_type = courier_item["courier_type"]
@@ -99,9 +107,29 @@ class Courier(models.Model):
             regions = validate_regions(regions),
             working_hours = validate_working_hours(working_hours)
         ).set_id(courier_id)
+        courier.save()
         return courier
 
     def set_id(self, value):
-        self.id = validate_courier_id(value)
+        self.id = int(validate_courier_id(value))
         return self
 
+    def get_courier_item(self):
+        courier_item = {
+            "courier_id": self.id,
+            "courier_type": self.courier_type.name,
+            "regions": self.regions,
+            "working_hours": self.working_hours
+        }
+        return courier_item
+
+    def validate_and_patch_instance(self, patch_data):
+        allowed_field_names = [x.name for x in Courier._meta.fields if x.name != "id"]
+        allowed_field_names.append("courier_id")
+        for field_name in patch_data:
+            if field_name not in allowed_field_names:
+                raise ValidationError(f"Courier model does not have such ('{field_name}') field")
+
+        courier_item = self.get_courier_item()
+        courier_item.update(patch_data)
+        return self.validate_create_and_save_from_courier_item(courier_item)

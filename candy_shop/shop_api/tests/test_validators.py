@@ -1,4 +1,4 @@
-from candy_shop.shop_api.scripts import add_courier_types_to_db
+from candy_shop.shop_api.scripts import add_courier_types_to_db, add_couriers_to_db
 from django.core.exceptions import ValidationError
 from candy_shop.shop_api import models
 from django.test import TestCase
@@ -35,6 +35,22 @@ class ValidateCourierIdTestCase(TestCase):
     # noinspection PyMethodMayBeStatic
     def test_valid(self):
         models.validate_courier_id("1")
+
+
+class ValidateCourierIdForPatchTestCase(TestCase):
+
+    @classmethod
+    def setUpTestData(cls):
+        add_courier_types_to_db.run()
+        add_couriers_to_db.run()
+
+    @check_validation_error
+    def test_does_not_exist(self):
+        models.validate_courier_id_for_patch("10")
+
+    # noinspection PyMethodMayBeStatic
+    def test_valid(self):
+        models.validate_courier_id_for_patch("1")
 
 
 class ValidateCourierTypeTestCase(TestCase):
