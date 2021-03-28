@@ -4,6 +4,7 @@ import jsonfield
 import datetime
 
 
+# todo: write tests for validators
 def validate_positive_integer(value, value_type = "id"):
     try:
         int(value)
