@@ -8,6 +8,7 @@
   - [POST /couriers](#post-couriers)
   - [PATCH /couriers/$courier_id](#patch-courierscourier_id)
   - [POST /orders](#post-orders)
+  - [POST /orders/assign](#post-ordersassign)
 - [Из задания](#из-задания)
   - [На что обратить внимание](#на-что-обратить-внимание)
   - [Также оценивается](#также-оценивается)
