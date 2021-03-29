@@ -75,9 +75,10 @@ class ViewBaseTestCase(TestCase):
         request_content_type = "application/json"
 
         with open(JSON_REQUESTS_FOLDER + json_name, 'r') as request_file:
+            request_data = json.load(request_file)
             request = getattr(self.factory, self.http_method)(
                 path = self.url_path,
-                data = json.load(request_file),
+                data = request_data,
                 content_type = request_content_type
             )
 

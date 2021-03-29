@@ -323,6 +323,6 @@ class Order(ModelWithJsonFields):
                 region = region,
                 delivery_hours = delivery_hours
             )
-        order.full_clean()
+        order.full_clean(exclude = ["assign_courier"])
         order.save()
         return order
