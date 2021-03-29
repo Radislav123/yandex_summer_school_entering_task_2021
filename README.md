@@ -1,5 +1,5 @@
 1) если не сказано иное, команды выполняются из корня проекта.
-2) везде, где используется `python` в командах, в Unix необходимо использовать `python3`
+2) везде, где используется `python` в командах, в Unix необходимо использовать `python3` (и `pip` => `pip3`)
 
 # Запуск сервера
 `python manage.py runserver 0.0.0.0:8080`
@@ -171,7 +171,8 @@ courier_type, regions, working_hours.
 
 ## Также оценивается
 - [ ] наличие реализованного обработчика 6: GET /couriers/$courier_id
-- [ ] наличие структуры с подробным описанием ошибок каждого некорректного поля, пришедшего в запросе
+- [x] наличие структуры с подробным описанием ошибок каждого (только первого некорректного поля в структуре)
+некорректного поля, пришедшего в запросе
 - [x] явно описанные внешние python-библиотеки (зависимости) ([*requirements.txt*](requirements.txt))
 - [x] наличие тестов ([*candy_shop/shop_api/tests*](candy_shop/shop_api/tests))
 - [x] наличие файла README в корне репозитория с инструкциями:
@@ -183,7 +184,23 @@ courier_type, regions, working_hours.
 
 ### Инструкции
 1) как установить/развернуть:
-    1)
+    0) (описывается процесс на чистой машине, которую дают для выполнения этого задания)
+    1) установить git
+    `sudo apt install git`
+    2) склонить проект (но проект приватный так что тут нужен к нему доступ)
+    `git clone https://github.com/Radislav123/yandex_summer_school_entering_task.git`
+    3) перейти в корень проекта
+    `cd yandex_summer_school_entering_task`
+    3) обновить apt
+    `sudo apt update`
+    4) установить pip
+    `sudo apt install python3-pip`
+    5) установить необходимые зависимости
+    `pip3 install -r requirements.txt`
+    6) инициализировать БД
+    `python3 manage.py runscript initialize_db`
+    7) запустить сервер
+    `python3 manage.py runserver 0.0.0.0:8080`
 2) как запустить сервис
     1) необходимо выполнить следующую команду:  
     `python manage.py runserver 0.0.0.0:8080`
