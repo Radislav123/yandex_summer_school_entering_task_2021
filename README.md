@@ -10,8 +10,6 @@
 - [Из задания](#из-задания)
   - [На что обратить внимание](#на-что-обратить-внимание)
   - [Также оценивается](#также-оценивается)
-- [Project_env](#project_env)
-  - [Активация интерпретатора](#активация-интерпретатора)
 - [Требуемые модули](#требуемые-модули)
 - [Описание модулей проекта](#описание-модулей-проекта)
   - [Не модули](#не-модули)
@@ -232,17 +230,6 @@ courier_type, regions, working_hours.
     3) для запуска конкретных тестов смотреть
     [*сюда*](https://docs.djangoproject.com/en/3.1/topics/testing/overview/#running-tests)
 
-
-# Project_env
-[*Как*](https://www.jetbrains.com/help/idea/creating-virtual-environment.html)
-создать виртуальное окружение.  
-Папка для интерпретатора - [*venv/*](venv)
-
-## Активация интерпретатора
-```
-project_env/Scripts/activate        # Unix
-project_env/Scripts/activate.bat    # Windows
-```
 
 # Требуемые модули
 `pip install -r requirements.txt`
