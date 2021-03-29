@@ -11,6 +11,7 @@ VALIDATION_ERROR_TEXT = "validation_error"
 VALIDATION_ERROR_DETAILS_TEXT = "validation_error_details"
 REQUEST_DATA_TEXT = "request_data"
 COURIERS = "couriers"
+ORDERS = "orders"
 
 
 class IndexView(View):
@@ -27,7 +28,7 @@ class CourierView(View):
             kwargs.update({"courier_id": request.path.split('/')[-1]})
         return super().dispatch(request, *args, **kwargs)
 
-    # noinspection PyMethodMayBeStatic
+    # noinspection PyMethodMayBeStatic,DuplicatedCode
     def post(self, request: HttpRequest):
         data = json.loads(request.body)["data"]
         created_courier_ids = []
@@ -36,7 +37,7 @@ class CourierView(View):
 
         for courier_item in data:
             try:
-                courier = models.Courier.validate_create_and_save_from_courier_item(courier_item = courier_item)
+                models.Courier.validate_create_and_save_from_dict(courier_item = courier_item)
             except ValidationError as validation_error:
                 try:
                     not_valid_courier_ids.append({"id": courier_item["courier_id"]})
@@ -55,7 +56,6 @@ class CourierView(View):
                         }
                     )
             else:
-                courier.save()
                 created_courier_ids.append({"id": courier_item["courier_id"]})
 
         if len(not_valid_courier_ids) == 0:
@@ -77,7 +77,7 @@ class CourierView(View):
         validation_error_details = []
 
         try:
-            courier_id = int(models.validate_courier_with_such_id_in_db(courier_id))
+            courier_id = int(models.validate_model_instance_with_such_id_in_db(courier_id, models.Courier))
             courier = models.Courier.objects.get(id = courier_id)
             courier = courier.validate_and_patch_instance(patch_data)
         except ValidationError as validation_error:
@@ -94,4 +94,53 @@ class CourierView(View):
             response = JsonResponse(data = return_data, status = 400)
         else:
             response = JsonResponse(data = courier.get_courier_item(), status = 200)
+        return response
+
+
+class OrderView(View):
+
+    @method_decorator(csrf_exempt)
+    def dispatch(self, request: HttpRequest, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
+
+    # noinspection PyMethodMayBeStatic,DuplicatedCode
+    def post(self, request: HttpRequest):
+        data = json.loads(request.body)["data"]
+        created_orders_ids = []
+        not_valid_orders_ids = []
+        validation_error_details = []
+
+        for order_item in data:
+            try:
+                models.Order.validate_create_and_save_from_dict(order_item = order_item)
+            except ValidationError as validation_error:
+                try:
+                    not_valid_orders_ids.append({"id": order_item["order_id"]})
+                    validation_error_details.append(
+                        {
+                            "order_id": order_item["order_id"],
+                            "message": validation_error.messages
+                        }
+                    )
+                except KeyError as key_error:
+                    not_valid_orders_ids.append({"id": None})
+                    validation_error_details.append(
+                        {
+                            "order_id": None,
+                            "message": str(key_error)
+                        }
+                    )
+            else:
+                created_orders_ids.append({"id": order_item["order_id"]})
+
+        if len(not_valid_orders_ids) == 0:
+            return_data = {ORDERS: created_orders_ids}
+            response = JsonResponse(data = return_data, status = 201)
+        else:
+            return_data = {
+                VALIDATION_ERROR_TEXT: {COURIERS: not_valid_orders_ids},
+                VALIDATION_ERROR_DETAILS_TEXT: validation_error_details,
+                REQUEST_DATA_TEXT: data
+            }
+            response = JsonResponse(data = return_data, status = 400)
         return response

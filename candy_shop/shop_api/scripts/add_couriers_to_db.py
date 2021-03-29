@@ -9,4 +9,4 @@ def run():
         couriers = json.load(file)["data"]
 
         for courier in couriers:
-            Courier.validate_create_and_save_from_courier_item(courier)
+            Courier.validate_create_and_save_from_dict(courier)

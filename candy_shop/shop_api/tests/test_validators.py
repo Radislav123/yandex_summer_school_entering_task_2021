@@ -35,7 +35,7 @@ class ValidatorsPositiveTestCase(TestCase):
         models.validate_positive_integer_or_float("1.1")
 
     def test_validate_courier_with_such_id_exist_in_db(self):
-        models.validate_courier_with_such_id_in_db("1")
+        models.validate_model_instance_with_such_id_in_db("1", models.Courier)
 
     def test_validate_courier_type(self):
         models.validate_courier_type_name(models.CourierType.max_weight_choices[0][1])
@@ -50,7 +50,7 @@ class ValidatorsPositiveTestCase(TestCase):
         models.validate_regions(["1", "2", "33", "930"])
 
     def test_validate_working_hours(self):
-        models.validate_working_hours(["10:00-13:00", "16:00-20:00"])
+        models.validate_time_period(["10:00-13:00", "16:00-20:00"])
 
 
 class ValidatorsNegativeTestCase(TestCase):
@@ -78,7 +78,7 @@ class ValidatorsNegativeTestCase(TestCase):
 
     @check_validation_error
     def test_validate_courier_with_such_id_exist_in_db(self):
-        models.validate_courier_with_such_id_in_db("4")
+        models.validate_model_instance_with_such_id_in_db("4", models.Courier)
 
     @check_validation_error
     def test_validate_courier_type(self):
@@ -98,4 +98,4 @@ class ValidatorsNegativeTestCase(TestCase):
 
     @check_validation_error
     def test_validate_working_hours(self):
-        models.validate_working_hours(["string", "123", "33:33-33:33"])
+        models.validate_time_period(["string", "123", "33:33-33:33"])

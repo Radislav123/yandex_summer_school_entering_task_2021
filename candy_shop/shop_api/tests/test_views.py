@@ -1,18 +1,18 @@
 from candy_shop.shop_api.scripts import add_courier_types_to_db, add_couriers_to_db
 from candy_shop.shop_api.tests import ViewBaseTestCase, JSON_REQUESTS_FOLDER
-from candy_shop.shop_api.views import CourierView
-from candy_shop.shop_api import models
+from candy_shop.shop_api import models, views
 import json
 
 
 COURIERS_URL_PATH = "/couriers"
+ORDERS_URL_PATH = "/orders"
 PATCH = "patch"
 POST = "post"
 GET = "get"
 
 
 class CourierViewPostValidDataTestCase(ViewBaseTestCase):
-    view = CourierView
+    view = views.CourierView
     url_path = COURIERS_URL_PATH
     http_method = POST
 
@@ -26,7 +26,7 @@ class CourierViewPostValidDataTestCase(ViewBaseTestCase):
 
 
 class CourierViewPostNotValidDataTestCase(ViewBaseTestCase):
-    view = CourierView
+    view = views.CourierView
     url_path = COURIERS_URL_PATH
     http_method = POST
 
@@ -64,7 +64,7 @@ class CourierViewPostNotValidDataTestCase(ViewBaseTestCase):
 
 
 class CourierViewPatchValidDataTestCase(ViewBaseTestCase):
-    view = CourierView
+    view = views.CourierView
     # url_path must be set for each test separately
     # url_path = COURIERS_URL_PATH
     http_method = PATCH
@@ -98,7 +98,7 @@ class CourierViewPatchValidDataTestCase(ViewBaseTestCase):
 
 class CourierViewPatchNotValidDataTestCase(ViewBaseTestCase):
     # there are no other checks as the method tested in CourierViewPostNotValidDataTestCase
-    view = CourierView
+    view = views.CourierView
     # url_path must be set for each test separately
     # url_path = COURIERS_URL_PATH
     http_method = PATCH
@@ -117,4 +117,56 @@ class CourierViewPatchNotValidDataTestCase(ViewBaseTestCase):
             json_name = json_name,
             expected_status_code = 400,
             method_name = "test_not_valid"
+        )
+
+
+class OrderViewPostValidDataTestCase(ViewBaseTestCase):
+    view = views.OrderView
+    url_path = ORDERS_URL_PATH
+    http_method = POST
+
+    def test_valid(self):
+        json_name = "orders_post_valid.json"
+        self.test_with_jsons(
+            json_name = json_name,
+            expected_status_code = 201,
+            method_name = "test_valid"
+        )
+
+
+class OrderViewPostNotValidDataTestCase(ViewBaseTestCase):
+    view = views.OrderView
+    url_path = ORDERS_URL_PATH
+    http_method = POST
+
+    def test_valid(self):
+        json_name = "orders_post_not_valid.json"
+        self.test_with_jsons(
+            json_name = json_name,
+            expected_status_code = 400,
+            method_name = "test_not_valid"
+        )
+
+    def test_empty_field(self):
+        json_name = "orders_post_empty_field.json"
+        self.test_with_jsons(
+            json_name = json_name,
+            expected_status_code = 400,
+            method_name = "test_empty_field"
+        )
+
+    def test_null_field(self):
+        json_name = "orders_post_null_field.json"
+        self.test_with_jsons(
+            json_name = json_name,
+            expected_status_code = 400,
+            method_name = "test_null_field"
+        )
+
+    def test_without_field(self):
+        json_name = "orders_post_without_field.json"
+        self.test_with_jsons(
+            json_name = json_name,
+            expected_status_code = 400,
+            method_name = "test_without_field"
         )

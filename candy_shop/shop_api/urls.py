@@ -4,5 +4,6 @@ from django.urls import re_path, path
 
 urlpatterns = [
     path("", views.IndexView.as_view()),
-    re_path(r"couriers/?$", views.CourierView.as_view())
+    re_path(r"couriers/?$", views.CourierView.as_view()),
+    re_path(r"orders/?$", views.OrderView.as_view())
 ]
