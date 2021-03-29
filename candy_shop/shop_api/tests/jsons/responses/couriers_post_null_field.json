@@ -14,5 +14,23 @@
         "id": 4
       }
     ]
-  }
+  },
+  "validation_error_details": [
+    {
+      "courier_id": null,
+      "message": "value can not be null"
+    },
+    {
+      "courier_id": 2,
+      "message": "value can not be null"
+    },
+    {
+      "courier_id": 3,
+      "message": "value can not be null"
+    },
+    {
+      "courier_id": 4,
+      "message": "value can not be null"
+    }
+  ]
 }

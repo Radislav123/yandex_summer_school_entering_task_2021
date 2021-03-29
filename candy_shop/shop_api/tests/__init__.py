@@ -45,7 +45,7 @@ class ViewBaseTestCase(TestCase):
 
         with open(f"{folder_to_save}/{method_name}.json", 'w') as file:
             response_json = json.loads(response.content)
-            response_json.update({"status_code": response.status_code})
+            response_json.update({"appended_to_response_json_status_code": response.status_code})
             file.write(json.dumps(response_json, indent = 2))
 
     @before_and_after_test

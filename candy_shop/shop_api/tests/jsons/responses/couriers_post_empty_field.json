@@ -14,5 +14,23 @@
         "id": 4
       }
     ]
-  }
+  },
+  "validation_error_details": [
+    {
+      "courier_id": "",
+      "message": "'' is not an integer"
+    },
+    {
+      "courier_id": 2,
+      "message": "CourierType with such name does not exist"
+    },
+    {
+      "courier_id": 3,
+      "message": "list of regions can not be empty"
+    },
+    {
+      "courier_id": 4,
+      "message": "list of working_hours can not be empty"
+    }
+  ]
 }

@@ -14,5 +14,23 @@
         "id": 4
       }
     ]
-  }
+  },
+  "validation_error_details": [
+    {
+      "courier_id": "one",
+      "message": "'one' is not an integer"
+    },
+    {
+      "courier_id": 2,
+      "message": "CourierType with such name does not exist"
+    },
+    {
+      "courier_id": 3,
+      "message": "'eleven' is not an integer"
+    },
+    {
+      "courier_id": 4,
+      "message": "'11' has not valid time format ('%H:%M-%H:%M')"
+    }
+  ]
 }

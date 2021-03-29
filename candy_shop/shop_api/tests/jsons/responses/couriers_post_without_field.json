@@ -14,5 +14,23 @@
         "id": 4
       }
     ]
-  }
+  },
+  "validation_error_details": [
+    {
+      "courier_id": null,
+      "message": "'courier_id'"
+    },
+    {
+      "courier_id": 2,
+      "message": "KeyError: 'courier_type'"
+    },
+    {
+      "courier_id": 3,
+      "message": "KeyError: 'regions'"
+    },
+    {
+      "courier_id": 4,
+      "message": "KeyError: 'working_hours'"
+    }
+  ]
 }

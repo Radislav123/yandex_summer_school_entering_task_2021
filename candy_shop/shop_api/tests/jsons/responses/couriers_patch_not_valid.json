@@ -1,1 +1,8 @@
-{}
+{
+  "validation_error_details": [
+    {
+      "courier_id": 2,
+      "message": "['CourierType with such name does not exist']"
+    }
+  ]
+}
