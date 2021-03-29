@@ -343,7 +343,7 @@ courier_type, regions, working_hours.
 - [x] явно описанные внешние python-библиотеки (зависимости) ([*requirements.txt*](requirements.txt))
 - [x] наличие тестов ([*candy_shop/shop_api/tests*](candy_shop/shop_api/tests))
 - [x] наличие файла README в корне репозитория с инструкциями:
-    - [ ] по [*установке/развертыванию*](https://coderanch.com/t/132937/engineering/difference-deployment-installation)
+    - [x] по [*установке/развертыванию*](https://coderanch.com/t/132937/engineering/difference-deployment-installation)
     - [x] по запуску сервиса
     - [x] по запуску тестов
 - [ ] автоматическое возобновление работы REST API после перезагрузки виртуальной машины
