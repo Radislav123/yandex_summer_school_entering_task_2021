@@ -42,7 +42,7 @@ def validate_courier_type(value):
     try:
         CourierType.objects.get(name = value)
     except ObjectDoesNotExist:
-        raise ValidationError("CourierType with such name does not exist")
+        raise ValidationError(f"CourierType with such ('{value}') name does not exist")
     return value
 
 

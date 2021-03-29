@@ -9,6 +9,7 @@ import json
 
 VALIDATION_ERROR_TEXT = "validation_error"
 VALIDATION_ERROR_DETAILS_TEXT = "validation_error_details"
+REQUEST_DATA_TEXT = "request_data"
 COURIERS = "couriers"
 
 
@@ -63,7 +64,8 @@ class CourierView(View):
         else:
             return_data = {
                 VALIDATION_ERROR_TEXT: {COURIERS: not_valid_courier_ids},
-                VALIDATION_ERROR_DETAILS_TEXT: validation_error_details
+                VALIDATION_ERROR_DETAILS_TEXT: validation_error_details,
+                REQUEST_DATA_TEXT: data
             }
             response = JsonResponse(data = return_data, status = 400)
         return response
@@ -72,20 +74,24 @@ class CourierView(View):
     def patch(self, request: HttpRequest, courier_id):
         patch_data = json.loads(request.body)
         patch_data.update({"courier_id": courier_id})
-        validation_error_details = {VALIDATION_ERROR_DETAILS_TEXT: []}
+        validation_error_details = []
 
         try:
             courier_id = int(models.validate_courier_id_for_patch(courier_id))
             courier = models.Courier.objects.get(id = courier_id)
             courier = courier.validate_and_patch_instance(patch_data)
         except ValidationError as validation_error:
-            validation_error_details[VALIDATION_ERROR_DETAILS_TEXT].append(
+            validation_error_details.append(
                 {
                     "courier_id": courier_id,
-                    "message": str(validation_error)
+                    "message": str(validation_error.messages[0])
                 }
             )
-            response = JsonResponse(data = validation_error_details, status = 400)
+            return_data = {
+                VALIDATION_ERROR_DETAILS_TEXT: validation_error_details,
+                REQUEST_DATA_TEXT: patch_data
+            }
+            response = JsonResponse(data = return_data, status = 400)
         else:
             response = JsonResponse(data = courier.get_courier_item(), status = 200)
         return response

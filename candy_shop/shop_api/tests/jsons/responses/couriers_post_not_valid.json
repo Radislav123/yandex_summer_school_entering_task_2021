@@ -22,7 +22,7 @@
     },
     {
       "courier_id": 2,
-      "message": "CourierType with such name does not exist"
+      "message": "CourierType with such ('bike and car') name does not exist"
     },
     {
       "courier_id": 3,
@@ -31,6 +31,68 @@
     {
       "courier_id": 4,
       "message": "'11' has not valid time format ('%H:%M-%H:%M')"
+    }
+  ],
+  "request_data": [
+    {
+      "_courier_id": 1,
+      "courier_id": "one",
+      "courier_type": "foot",
+      "regions": [
+        1,
+        12,
+        22
+      ],
+      "working_hours": [
+        "11:35-14:05",
+        "09:00-11:00"
+      ]
+    },
+    {
+      "courier_id": 2,
+      "_courier_type": "bike",
+      "courier_type": "bike and car",
+      "regions": [
+        22
+      ],
+      "working_hours": [
+        "09:00-18:00"
+      ]
+    },
+    {
+      "courier_id": 3,
+      "courier_type": "car",
+      "_regions": [
+        11,
+        22,
+        23,
+        33
+      ],
+      "regions": [
+        "eleven",
+        22,
+        23,
+        33
+      ],
+      "working_hours": [
+        "11:00-22:00"
+      ]
+    },
+    {
+      "courier_id": 4,
+      "courier_type": "car",
+      "regions": [
+        22,
+        23,
+        33
+      ],
+      "_working_hours": [
+        "11:00-22:00"
+      ],
+      "working_hours": [
+        11,
+        22
+      ]
     }
   ]
 }

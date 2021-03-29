@@ -43,14 +43,14 @@
 
 ### Описание полей
 Все поля обязательны.
-- courier_id - целое положительное число (Уникальный идентификатор курьера, положительное число.
+- `courier_id` - целое положительное число (Уникальный идентификатор курьера, положительное число.
                                           Идентификаторы уникальны в пределах всего сервиса.)
-- courier_type - строка (Тип курьера. Возможные значения:
+- `courier_type` - строка (Тип курьера. Возможные значения:
                          foot — пеший курьер
                          bike — велокурьер
                          car — курьер на автомобиле.)
-- regions - массив целых положительных чисел (Список идентификаторов районов, в которых работает курьер.)
-- working_hours - массив строк (График работы курьера. Формат строки HH:MM-HH:MM. Есть гарантия на
+- `regions` - массив целых положительных чисел (Список идентификаторов районов, в которых работает курьер.)
+- `working_hours` - массив строк (График работы курьера. Формат строки HH:MM-HH:MM. Есть гарантия на
                                 то, что промежутки, переданные тестирующей системой, не будут
                                 пересекаться.)
 
@@ -63,7 +63,43 @@
 {
   "validation_error": {
     "couriers": [{"id": 2}, {"id": 3}]
-  }
+  },
+  "validation_error_details": [
+    {
+      "courier_id": 2,
+      "message": "CourierType with such name does not exist"
+    },
+    {
+      "courier_id": 3,
+      "message": "list of regions can not be empty"
+    }
+  ],
+  "request_data": [
+    {
+      "courier_id": "one",
+      "courier_type": "foot",
+      "regions": [1, 12, 22],
+      "working_hours": ["11:35-14:05", "09:00-11:00"]
+    },
+    {
+      "courier_id": 2,
+      "courier_type": "bike and car",
+      "regions": [22],
+      "working_hours": ["09:00-18:00"]
+    },
+    {
+      "courier_id": 3,
+      "courier_type": "car",
+      "regions": ["eleven", 22, 23, 33],
+      "working_hours": ["11:00-22:00"]
+    },
+    {
+      "courier_id": 4,
+      "courier_type": "car",
+      "regions": [22, 23, 33],
+      "working_hours": [11, 22]
+    }
+  ]
 }
 ```
 
@@ -95,7 +131,19 @@ courier_type, regions, working_hours.
 Пример:  
 `HTTP 400 Bad Request`
 ```json
-{}
+{
+  "validation_error_details": [
+    {
+      "courier_id": 2,
+      "message": "CourierType with such ('car and bike') name does not exist"
+    }
+  ],
+  "request_data": {
+    "regions": [11, 33, "string"],
+    "courier_type": "car and bike",
+    "courier_id": "2"
+  }
+}
 ```
 
 В случае успеха — `HTTP 200 OK` и актуальную информацию о редактируемом курьере.  

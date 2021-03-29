@@ -108,7 +108,7 @@ class CourierViewPatchNotValidDataTestCase(ViewBaseTestCase):
         add_courier_types_to_db.run()
         add_couriers_to_db.run()
 
-    def test_valid(self):
+    def test_not_valid(self):
         courier_id = 2
         self.url_path = f"{COURIERS_URL_PATH}/{courier_id}"
         json_name = "couriers_patch_not_valid.json"
@@ -116,5 +116,5 @@ class CourierViewPatchNotValidDataTestCase(ViewBaseTestCase):
         self.test_with_jsons(
             json_name = json_name,
             expected_status_code = 400,
-            method_name = "test_valid"
+            method_name = "test_not_valid"
         )
