@@ -4,6 +4,9 @@ import jsonfield
 import datetime
 
 
+TIME_FORMAT = "%H:%M"
+
+
 def validate_not_null(value):
     if value is None:
         raise ValidationError("value can not be null")
@@ -102,15 +105,14 @@ def validate_regions(value):
 
 def validate_time_period(value):
     # expected that validate_list and validate_not_empty_list had success
-    time_format = "%H:%M"
     for period in value:
-        validation_error_text = f"'{period}' has not valid time format ('{time_format}-{time_format}')"
+        validation_error_text = f"'{period}' has not valid time format ('{TIME_FORMAT}-{TIME_FORMAT}')"
         if type(period) is not str:
             raise ValidationError(validation_error_text)
         try:
             start_time, end_time = period.split('-')
-            datetime.datetime.strptime(start_time, time_format)
-            datetime.datetime.strptime(end_time, time_format)
+            datetime.datetime.strptime(start_time, TIME_FORMAT)
+            datetime.datetime.strptime(end_time, TIME_FORMAT)
         except ValueError:
             raise ValidationError(validation_error_text)
     return value
@@ -173,6 +175,9 @@ class Courier(ModelWithJsonFields):
     regions = jsonfield.JSONField()
     # list of strings
     working_hours = jsonfield.JSONField()
+    # list of Order.id
+    # in UTC timezone
+    assign_time = models.DateTimeField(null = True)
 
     json_fields_validators = {
         f"{regions =}".split(' ')[0]: [
@@ -217,15 +222,6 @@ class Courier(ModelWithJsonFields):
         courier.save()
         return courier
 
-    def get_courier_item(self):
-        courier_item = {
-            "courier_id": self.id,
-            "courier_type": self.courier_type.name,
-            "regions": self.regions,
-            "working_hours": self.working_hours
-        }
-        return courier_item
-
     def validate_and_patch_instance(self, patch_data):
         allowed_field_names = [x.name for x in Courier._meta.fields if x.name != "id"]
         allowed_field_names.append("courier_id")
@@ -237,6 +233,46 @@ class Courier(ModelWithJsonFields):
         courier_item.update(patch_data)
 
         return self.validate_create_and_save_from_dict(courier_item, True)
+
+    def get_courier_item(self):
+        courier_item = {
+            "courier_id": self.id,
+            "courier_type": self.courier_type.name,
+            "regions": self.regions,
+            "working_hours": self.working_hours
+        }
+        return courier_item
+
+    def filter_orders_by_working_hours(self, orders: models.QuerySet):
+        orders_list = []
+        if self.assign_time is None:
+            for order in orders:
+                if order.assign_courier is not None:
+                    break
+                for working_period in self.working_hours:
+                    for delivery_period in order.delivery_hours:
+                        working_period_start, working_period_end = working_period.split('-')
+                        delivery_period_start, delivery_period_end = delivery_period.split('-')
+                        ws = datetime.datetime.strptime(working_period_start, TIME_FORMAT)
+                        we = datetime.datetime.strptime(working_period_end, TIME_FORMAT)
+                        ds = datetime.datetime.strptime(delivery_period_start, TIME_FORMAT)
+                        de = datetime.datetime.strptime(delivery_period_end, TIME_FORMAT)
+                        if ws <= ds <= we or ws <= de <= we or ds <= ws <= de or ds <= we <= de:
+                            order.assign_courier = self
+                            self.assign_time = datetime.datetime.now(tz = datetime.timezone.utc)
+                            orders_list.append(order)
+                            break
+        else:
+            orders_list = list(Order.objects.filter(assign_courier = self))
+        return orders_list
+
+    def assign_orders(self):
+        orders = Order.objects.filter(
+            weight__lte = self.courier_type.max_weight,
+            region__in = self.regions
+        )
+        orders = self.filter_orders_by_working_hours(orders)
+        return orders
 
 
 class Order(ModelWithJsonFields):
@@ -252,6 +288,7 @@ class Order(ModelWithJsonFields):
     )
     # list of strings
     delivery_hours = jsonfield.JSONField()
+    assign_courier = models.ForeignKey(Courier, on_delete = models.PROTECT, null = True)
 
     json_fields_validators = {
         f"{delivery_hours =}".split(' ')[0]: [
