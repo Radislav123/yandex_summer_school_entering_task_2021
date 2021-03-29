@@ -1,5 +1,6 @@
 ### Common ###
 # Byte-compiled / optimized / DLL files
+.idea/
 *.py[cod]
 *.log
 logs/
