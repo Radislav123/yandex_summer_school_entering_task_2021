@@ -1,6 +1,7 @@
 from candy_shop.shop_api.scripts import database_for_test
 from django.core.exceptions import ValidationError
 from django.test import TestCase, RequestFactory
+from candy_shop.shop_api import views
 from pathlib import Path
 import unittest
 import json
@@ -85,4 +86,10 @@ class ViewBaseTestCase(TestCase):
             self.assertEqual(int(response.status_code), int(expected_status_code))
 
             with open(JSON_RESPONSES_FOLDER + json_name, 'r') as response_file:
-                self.assertEqual(json.loads(response.content), json.load(response_file))
+                response_data = json.loads(response.content)
+                if views.VALIDATION_ERROR_DETAILS_TEXT in response_data:
+                    del response_data[views.VALIDATION_ERROR_DETAILS_TEXT]
+                if views.REQUEST_DATA_TEXT in response_data:
+                    del response_data[views.REQUEST_DATA_TEXT]
+                data_to_check = json.load(response_file)
+                self.assertEqual(response_data, data_to_check)

@@ -43,7 +43,7 @@ class CourierView(View):
                     validation_error_details.append(
                         {
                             "courier_id": courier_item["courier_id"],
-                            "message": str(validation_error.messages[0])
+                            "message": validation_error.messages
                         }
                     )
                 except KeyError as key_error:
@@ -77,14 +77,14 @@ class CourierView(View):
         validation_error_details = []
 
         try:
-            courier_id = int(models.validate_courier_id_for_patch(courier_id))
+            courier_id = int(models.validate_courier_with_such_id_in_db(courier_id))
             courier = models.Courier.objects.get(id = courier_id)
             courier = courier.validate_and_patch_instance(patch_data)
         except ValidationError as validation_error:
             validation_error_details.append(
                 {
                     "courier_id": courier_id,
-                    "message": str(validation_error.messages[0])
+                    "message": validation_error.messages
                 }
             )
             return_data = {

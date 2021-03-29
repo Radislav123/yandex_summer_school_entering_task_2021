@@ -1,17 +1,1 @@
-{
-  "validation_error_details": [
-    {
-      "courier_id": 2,
-      "message": "CourierType with such ('car and bike') name does not exist"
-    }
-  ],
-  "request_data": {
-    "regions": [
-      11,
-      33,
-      "string"
-    ],
-    "courier_type": "car and bike",
-    "courier_id": "2"
-  }
-}
+{}
