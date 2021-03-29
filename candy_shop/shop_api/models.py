@@ -218,7 +218,7 @@ class Courier(ModelWithJsonFields):
                 regions = regions,
                 working_hours = working_hours
             )
-        courier.full_clean()
+        courier.full_clean(exclude = ["assign_time"])
         courier.save()
         return courier
 
